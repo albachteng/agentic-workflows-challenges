@@ -1,8 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from '../src/server';
+import { taskStore } from '../src/store/taskStore';
 
 describe('Task API', () => {
+  beforeEach(() => {
+    taskStore.clear();
+  });
+
   describe('GET /tasks', () => {
     it('should return empty array when no tasks exist', async () => {
       // Arrange & Act
