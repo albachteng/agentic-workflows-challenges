@@ -22,19 +22,19 @@
 
 ## Phase 2: Exercises
 
-### Exercise 1 - Prompting and Context Management
-- [ ] README.md (instructions + git workflow reminders)
-- [ ] prompts/method-a-minimal.md (example approach)
-- [ ] prompts/method-b-structured.md (example approach)
-- [ ] prompts/method-c-incremental.md (example approach)
-- [ ] reflection-template.md (open-ended observations)
+### Exercise 1 - Prompting and Context Management ✅ COMPLETE
+- [x] README.md (instructions + git workflow reminders)
+- [x] prompts/method-a-minimal.md (example approach)
+- [x] prompts/method-b-structured.md (example approach)
+- [x] prompts/method-c-incremental.md (example approach)
+- [x] reflection-template.md (open-ended observations)
 
-### Exercise 2 - Linked Documents and Skills
-- [ ] README.md (instructions + git workflow reminders)
-- [ ] prompts/workflow-a-prompt-only.md
-- [ ] prompts/workflow-b-linked-docs.md
-- [ ] prompts/workflow-c-rules-skills.md
-- [ ] reflection-template.md
+### Exercise 2 - Linked Documents and Skills ✅ COMPLETE
+- [x] README.md (instructions + git workflow reminders)
+- [x] prompts/workflow-a-prompt-only.md
+- [x] prompts/workflow-b-linked-docs.md
+- [x] prompts/workflow-c-rules-skills.md
+- [x] reflection-template.md
 
 ### Exercise 3 - Multi-Agent Workflow
 - [ ] README.md (instructions + git workflow reminders)
@@ -104,8 +104,10 @@
 
 ## Current Status
 
-**Last Completed**: Phase 1 - Core Documentation ✅
+**Last Completed**: Exercise 1 & 2 ✅
 
-**Next Up**: Phase 2 - Exercise Templates
+**Next Up**: Exercise 3 - Multi-Agent Workflow
 
-**Awaiting Review**: Phase 1 documentation files
+**Awaiting Review**:
+- Exercise 1: Prompting and Context Management
+- Exercise 2: Linked Documents and Skills
