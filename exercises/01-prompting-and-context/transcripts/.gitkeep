@@ -1,0 +1,9 @@
+# Transcripts Folder
+
+Save your conversation transcripts here:
+
+- `method-a-transcript.md` - Method A: Minimal Prompt
+- `method-b-transcript.md` - Method B: Structured Prompt
+- `method-c-transcript.md` - Method C: Incremental Context
+
+Include complete prompts and agent responses for each method.
