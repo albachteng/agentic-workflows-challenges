@@ -1,0 +1,16 @@
+# Transcripts Folder
+
+Save transcripts from ALL agents here:
+
+## Sequential Workflow:
+- `sequential-agent1-architect.md`
+- `sequential-agent2-implementer.md`
+- `sequential-agent3-tester.md`
+- `sequential-agent4-reviewer.md`
+
+## Parallel Workflow:
+- `parallel-agent-a-frontend.md`
+- `parallel-agent-b-backend.md`
+- `parallel-agent-c-testing.md`
+- `parallel-agent-d-documentation.md`
+- `parallel-integration-notes.md` (your integration experience)

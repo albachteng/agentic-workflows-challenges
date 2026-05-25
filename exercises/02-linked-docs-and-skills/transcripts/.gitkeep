@@ -1,0 +1,9 @@
+# Transcripts Folder
+
+Save your conversation transcripts here:
+
+- `workflow-a-transcript.md` - Workflow A: Prompt-Only Guidance  
+- `workflow-b-transcript.md` - Workflow B: Linked Documentation
+- `workflow-c-transcript.md` - Workflow C: Rules and Skills
+
+Include complete prompts and agent responses for each workflow.
