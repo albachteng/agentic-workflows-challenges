@@ -40,9 +40,9 @@ By completing this exercise, you will:
 
 ## The TDD Rules
 
-**YOU MUST FOLLOW THESE RULES**:
+**Follow these rules strictly**:
 
-1. **NO implementation before tests** - Write failing tests first, always
+1. **No implementation before tests** - Write failing tests first, always
 2. **Review tests before implementing** - Critically evaluate agent-proposed tests
 3. **One feature at a time** - Complete full TDD cycle before next feature
 4. **Tests must fail first** - Verify RED state before going GREEN
@@ -76,7 +76,7 @@ For **each feature**:
 ```
 Write tests for [feature] following TDD.
 
-Do NOT implement the feature yet.
+Do not implement the feature yet.
 Just write comprehensive tests that would verify the feature works correctly.
 
 Tests should:
@@ -110,7 +110,7 @@ The tests should FAIL initially (RED state).
 npm test
 ```
 
-**They MUST fail**. If they pass, the tests are wrong!
+**They must fail**. If they pass, the tests are wrong!
 
 ### Phase 3: GREEN - Implement to Pass Tests
 
@@ -122,7 +122,7 @@ Here are the tests we agreed on:
 Now implement the feature to make these tests pass.
 
 Write minimal, clean implementation.
-Do NOT change the tests.
+Do not change the tests.
 Focus on making all tests GREEN.
 ```
 
@@ -143,8 +143,8 @@ All tests are passing. Now refactor the implementation to improve:
 - Performance
 - Maintainability
 
-KEEP ALL TESTS PASSING.
-Do NOT change test behavior.
+Keep all tests passing.
+Do not change test behavior.
 ```
 
 **Run tests after each refactoring**:

@@ -13,6 +13,54 @@ This lab accompanies the lecture: **"Agentic Workflows: Modern Software Engineer
 - Your choice of agent environment (Cursor, Claude Code, Aider, VSCode Copilot, etc.)
 - API access to an LLM (OpenAI, Anthropic, etc.) OR a local model setup (Ollama, llama.cpp)
 
+**New to agent environments?** See `docs/agent-setup.md` for detailed setup instructions.
+
+**On a budget?** Check `docs/free-agent-options.md` for free and open-source alternatives (including GitHub Copilot free tier for students and Continue.dev with local models).
+
+### Verify Your Setup
+
+Before starting the exercises, verify your environment is ready:
+
+**1. Check Node.js and npm:**
+```bash
+node --version  # Should be 18.0.0 or higher
+npm --version   # Should be 8.0.0 or higher
+```
+
+**2. Check Git:**
+```bash
+git --version  # Any recent version is fine
+```
+
+**3. Verify your agent environment:**
+
+*For Cursor:* Open Cursor, go to Settings → General → Models, and verify you have an API key configured.
+
+*For Claude Code:*
+```bash
+claude --version  # Should show version number
+```
+
+*For Continue.dev:* Open VS Code, check that the Continue extension is installed and configured.
+
+*For Aider:*
+```bash
+aider --version  # Should show version number
+```
+
+*For local models (Ollama):*
+```bash
+ollama --version  # Should show version number
+ollama list      # Should show installed models (or be empty initially)
+```
+
+**4. Test your agent:**
+Try a simple code generation task to verify everything works:
+- Ask your agent to "create a function that adds two numbers in JavaScript"
+- You should get a response with working code
+
+If any verification step fails, see `docs/agent-setup.md` for troubleshooting.
+
 ### Setup
 
 1. Clone this repository:
