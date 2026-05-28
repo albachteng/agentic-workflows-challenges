@@ -18,7 +18,7 @@
 ```
 I need to implement [feature description].
 
-Write comprehensive TESTS ONLY. Do not implement the feature.
+Write comprehensive tests only. Do not implement the feature.
 
 Tests should cover:
 - Happy path: [describe expected behavior]
@@ -60,7 +60,7 @@ Please add tests for these cases.
 npm test
 ```
 
-**All new tests MUST fail.** If they pass, they're testing the wrong thing!
+**All new tests must fail.** If they pass, they're testing the wrong thing!
 
 ### Step 4: Request Implementation
 
@@ -70,9 +70,9 @@ Here are the approved tests: [point to test file]
 Now implement the feature to make these tests pass.
 
 Requirements:
-- Make ALL tests GREEN
+- Make all tests GREEN
 - Write minimal, clean code
-- Do NOT modify the tests
+- Do not modify the tests
 - Follow docs/coding-guidelines.md
 
 Show me when tests are passing.
@@ -84,7 +84,7 @@ Show me when tests are passing.
 npm test
 ```
 
-**All tests MUST pass.** If they don't, fix implementation (not tests).
+**All tests must pass.** If they don't, fix implementation (not tests).
 
 ### Step 6: Refactor
 
@@ -95,7 +95,7 @@ All tests passing! Now refactor to improve:
 - Simplify complex code
 - Improve performance
 
-CRITICAL: Keep all tests GREEN during refactoring.
+It's critical to keep all tests GREEN during refactoring.
 Run tests after each change.
 ```
 
@@ -131,7 +131,7 @@ Tests should cover:
 - Undo stack limit (11 deletes = only 10 undoable)
 - Delete non-existent task (error handling)
 
-Do NOT implement. Just write failing tests.
+Do not implement. Just write failing tests.
 ```
 
 ### Step 2: Agent Response (Example)

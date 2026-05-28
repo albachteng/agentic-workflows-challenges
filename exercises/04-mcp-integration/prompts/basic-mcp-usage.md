@@ -6,6 +6,7 @@
 
 **1. Create MCP config**: `.claude/mcp_servers.json`
 
+**macOS/Linux:**
 ```json
 {
   "filesystem": {
@@ -14,6 +15,21 @@
   }
 }
 ```
+
+**Windows (PowerShell):**
+```json
+{
+  "filesystem": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "${workspaceFolder}"]
+  }
+}
+```
+
+Note: On Windows, you can use either:
+- Forward slashes: `C:/Users/YourName/projects/my-project`
+- Backslashes (escaped): `C:\\Users\\YourName\\projects\\my-project`
+- The `${workspaceFolder}` variable (recommended - works on all platforms)
 
 **2. Restart Claude Code**
 
@@ -42,6 +58,7 @@ Save the report to test-coverage-report.md
 
 **Setup**: `.claude/mcp_servers.json`
 
+**macOS/Linux:**
 ```json
 {
   "github": {
@@ -53,6 +70,25 @@ Save the report to test-coverage-report.md
   }
 }
 ```
+
+**Windows (PowerShell):**
+```json
+{
+  "github": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-github"],
+    "env": {
+      "GITHUB_TOKEN": "your_token_here"
+    }
+  }
+}
+```
+
+Note: To install MCP servers on Windows:
+1. Open PowerShell or Command Prompt
+2. Ensure Node.js and npm are installed: `node --version`
+3. The MCP servers will be installed automatically via `npx` when Claude Code starts
+4. For manual installation: `npm install -g @modelcontextprotocol/server-github`
 
 **Example task**: Create issues from TODOs
 

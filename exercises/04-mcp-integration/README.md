@@ -85,6 +85,45 @@ git commit -m "feat: use MCP to [accomplish task]"
 
 ---
 
+## Safety Considerations
+
+### Before Giving Agents Tool Access
+
+1. **Understand what the tool can do**
+   - Read the MCP server documentation
+   - Test tools manually first
+   - Know what permissions are granted
+
+2. **Start with read-only tools**
+   - Filesystem: Read-only first, write later
+   - GitHub: Read issues/PRs before creating them
+   - Database: SELECT queries before UPDATE/DELETE
+
+3. **Limit scope**
+   - Filesystem: Limit to project directory, not entire system
+   - GitHub: Limit to a test repository first
+   - Shell: Consider which commands are safe
+
+4. **Monitor usage**
+   - Review what tools the agent calls
+   - Check parameters passed to tools
+   - Verify results before trusting them
+
+### Red Flags
+
+Watch for concerning agent behavior:
+
+🚩 Agent tries to access files outside project directory
+🚩 Agent attempts to delete or modify files without asking
+🚩 Agent makes API calls to external services without permission
+🚩 Agent tries to execute potentially dangerous shell commands
+🚩 Agent doesn't validate inputs before using tools
+🚩 Agent ignores error responses from tools
+
+**If you see these**: Stop, analyze why, and adjust permissions or prompting.
+
+---
+
 ## Setup Instructions
 
 ### For Claude Code
@@ -94,6 +133,8 @@ Claude Code has built-in MCP support.
 **Example: Filesystem MCP**
 
 1. Create `.claude/mcp_servers.json`:
+
+**macOS/Linux:**
 ```json
 {
   "filesystem": {
@@ -102,6 +143,21 @@ Claude Code has built-in MCP support.
   }
 }
 ```
+
+**Windows (PowerShell):**
+```json
+{
+  "filesystem": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/Users/YourName/projects/my-project"]
+  }
+}
+```
+
+Note: On Windows, you can use either:
+- Forward slashes: `C:/Users/YourName/projects/my-project`
+- Backslashes (escaped): `C:\\Users\\YourName\\projects\\my-project`
+- The `${workspaceFolder}` variable (recommended - works on all platforms)
 
 2. Restart Claude Code
 
@@ -220,45 +276,6 @@ See `prompts/basic-mcp-usage.md` for setup guides for various agent environments
 - Check if an NPM package is actively maintained
 - Fetch changelog for dependency update
 - Look up error messages and find solutions
-
----
-
-## Safety Considerations
-
-### Before Giving Agents Tool Access
-
-1. **Understand what the tool can do**
-   - Read the MCP server documentation
-   - Test tools manually first
-   - Know what permissions are granted
-
-2. **Start with read-only tools**
-   - Filesystem: Read-only first, write later
-   - GitHub: Read issues/PRs before creating them
-   - Database: SELECT queries before UPDATE/DELETE
-
-3. **Limit scope**
-   - Filesystem: Limit to project directory, not entire system
-   - GitHub: Limit to a test repository first
-   - Shell: Consider which commands are safe
-
-4. **Monitor usage**
-   - Review what tools the agent calls
-   - Check parameters passed to tools
-   - Verify results before trusting them
-
-### Red Flags
-
-Watch for concerning agent behavior:
-
-🚩 Agent tries to access files outside project directory
-🚩 Agent attempts to delete or modify files without asking
-🚩 Agent makes API calls to external services without permission
-🚩 Agent tries to execute potentially dangerous shell commands
-🚩 Agent doesn't validate inputs before using tools
-🚩 Agent ignores error responses from tools
-
-**If you see these**: Stop, analyze why, and adjust permissions or prompting.
 
 ---
 

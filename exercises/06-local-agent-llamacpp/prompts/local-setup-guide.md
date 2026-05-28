@@ -5,12 +5,20 @@
 ### Option 1: Ollama (Easiest)
 
 **1. Install Ollama**:
-```bash
-# macOS/Linux
-curl https://ollama.ai/install.sh | sh
 
-# Or download from https://ollama.ai
+*macOS/Linux:*
+```bash
+curl https://ollama.ai/install.sh | sh
 ```
+
+*Windows:*
+- Download the installer from https://ollama.ai/download
+- Run `OllamaSetup.exe`
+- Ollama will install and run as a Windows service
+- Verify installation:
+  ```powershell
+  ollama --version
+  ```
 
 **2. Pull a coding model**:
 ```bash
@@ -31,11 +39,34 @@ ollama run qwen2.5-coder:7b
 ### Option 2: llama.cpp (More Control)
 
 **1. Build llama.cpp**:
+
+*macOS/Linux/WSL:*
 ```bash
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
 make
 ```
+
+*Windows (CMake):*
+```powershell
+# Install CMake from https://cmake.org/download/ if not already installed
+# Install Visual Studio Build Tools from https://visualstudio.microsoft.com/downloads/
+
+# Clone repository
+git clone https://github.com/ggerganov/llama.cpp
+cd llama.cpp
+
+# Build with CMake
+cmake -B build
+cmake --build build --config Release
+
+# Binaries will be in build\bin\Release\
+```
+
+*Windows (Pre-built binaries - Easiest):*
+- Download pre-built binaries from https://github.com/ggerganov/llama.cpp/releases
+- Extract to a folder (e.g., `C:\llama.cpp`)
+- Add to PATH or run from that directory
 
 **2. Download GGUF model**:
 ```bash
@@ -48,12 +79,31 @@ huggingface-cli download \
 ```
 
 **3. Run server**:
+
+*macOS/Linux/WSL:*
 ```bash
 ./server \
   -m models/qwen2.5-coder-7b-instruct-q4_k_m.gguf \
   --ctx-size 4096 \
   --port 8080 \
   --n-gpu-layers 35  # Adjust for your GPU (0 for CPU only)
+```
+
+*Windows (PowerShell):*
+```powershell
+# If built with CMake
+.\build\bin\Release\server.exe `
+  -m models\qwen2.5-coder-7b-instruct-q4_k_m.gguf `
+  --ctx-size 4096 `
+  --port 8080 `
+  --n-gpu-layers 35  # Adjust for your GPU (0 for CPU only)
+
+# If using pre-built binaries
+.\server.exe `
+  -m models\qwen2.5-coder-7b-instruct-q4_k_m.gguf `
+  --ctx-size 4096 `
+  --port 8080 `
+  --n-gpu-layers 35
 ```
 
 **4. Test**:
