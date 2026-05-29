@@ -38,30 +38,6 @@ By the end of this lab, students should be able to:
 
 ---
 
-# Recommended Tech Stack
-
-Students may use any stack they are comfortable with.
-
-Recommended baseline:
-
-## Frontend
-
-* React
-* Vite
-* TypeScript
-
-## Backend
-
-* Node.js
-* Express
-* TypeScript
-
-## Testing
-
-* Vitest
-* React Testing Library
-* Supertest
-
 ## Suggested Agent Environments
 
 * Cursor
@@ -76,7 +52,7 @@ Recommended baseline:
 # Repository Structure
 
 ```text
-agentic-workflows-lab/
+agentic-workflows-challenge/
 │
 ├── README.md
 ├── docs/
@@ -367,20 +343,11 @@ Students should use multiple agents.
 
 Example:
 
-Agent 1:
+Agent A:
 
 * architecture planning
-
-Agent 2:
-
 * implementation
-
-Agent 3:
-
 * test generation
-
-Agent 4:
-
 * code review
 
 ---
