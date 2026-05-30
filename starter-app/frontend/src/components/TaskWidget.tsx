@@ -1,67 +1,49 @@
-import { useState, useEffect } from 'react';
-import * as api from '../services/api';
+import { useState } from 'react';
+import { useTasks, SortPreference } from '../hooks/useTasks';
+import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import type { Task } from '../services/api';
 
-// INTENTIONAL FLAW #4: Business logic directly in component (no separation of concerns)
-// INTENTIONAL FLAW #7: Magic strings scattered throughout
 export const TaskWidget = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const {
+    tasks,
+    loading,
+    error,
+    sortPreference,
+    setSortPreference,
+    loadTasks,
+    createTaskOptimistically,
+    updateTaskOptimistically,
+    deleteTaskOptimistically,
+    setError
+  } = useTasks();
+
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  // INTENTIONAL FLAW #1: Unnecessary re-renders - no memoization
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+
   const filteredTasks = tasks.filter((task) => {
     if (statusFilter === 'all') return true;
     return task.status === statusFilter;
   });
 
-  // INTENTIONAL FLAW #4: Business logic in component instead of custom hook or service
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  const loadTasks = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.fetchTasks();
-      setTasks(data);
-    } catch (err) {
-      // INTENTIONAL FLAW #8: Inconsistent error handling
-      setError('Error loading tasks');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // INTENTIONAL FLAW #3: No debouncing for form submission
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // INTENTIONAL FLAW #9: Duplicated validation (also exists in backend)
     if (!newTaskTitle.trim()) {
       setValidationError('Title is required');
       return;
     }
 
     setValidationError(null);
-    setLoading(true);
-    setError(null);
     try {
-      const newTask = await api.createTask({ title: newTaskTitle });
-      // INTENTIONAL FLAW #1: Causes unnecessary re-render of entire list
-      setTasks([...tasks, newTask]);
+      await createTaskOptimistically(newTaskTitle);
       setNewTaskTitle('');
     } catch (err) {
-      // INTENTIONAL FLAW #8: Different error message format
-      setError('Error creating task');
-    } finally {
-      setLoading(false);
+      // Error is handled by hook
     }
   };
 
@@ -76,20 +58,17 @@ export const TaskWidget = () => {
   };
 
   const handleSaveEdit = async (taskId: string) => {
-    // INTENTIONAL FLAW #9: Duplicated validation
     if (!editingTitle.trim()) {
       handleCancelEdit();
       return;
     }
 
     try {
-      const updatedTask = await api.updateTask(taskId, { title: editingTitle });
-      // INTENTIONAL FLAW #1: Updates entire tasks array causing re-render
-      setTasks(tasks.map((t) => (t.id === taskId ? updatedTask : t)));
+      await updateTaskOptimistically(taskId, editingTitle);
       setEditingTaskId(null);
       setEditingTitle('');
     } catch (err) {
-      setError('Error updating task');
+      // Error handled by hook
     }
   };
 
@@ -101,11 +80,18 @@ export const TaskWidget = () => {
     }
   };
 
-  const handleRetry = () => {
-    loadTasks();
+  const confirmDelete = async () => {
+    if (taskToDelete) {
+      const id = taskToDelete.id;
+      setTaskToDelete(null);
+      try {
+        await deleteTaskOptimistically(id);
+      } catch (err) {
+        // Error handled by hook
+      }
+    }
   };
 
-  // INTENTIONAL FLAW #7: Magic strings for status values
   return (
     <div className="task-widget">
       <h1>Task Manager</h1>
@@ -113,7 +99,7 @@ export const TaskWidget = () => {
       {error && (
         <div className="error" role="alert">
           {error}
-          <button onClick={handleRetry}>Retry</button>
+          <button onClick={() => { setError(null); loadTasks(); }}>Retry</button>
         </div>
       )}
 
@@ -123,7 +109,6 @@ export const TaskWidget = () => {
         </div>
       )}
 
-      {/* INTENTIONAL FLAW #4: Form logic mixed with display logic */}
       <form onSubmit={handleCreateTask}>
         <input
           type="text"
@@ -138,7 +123,6 @@ export const TaskWidget = () => {
         </button>
       </form>
 
-      {/* INTENTIONAL FLAW #7: Magic strings for filter values */}
       <div className="filters">
         <button
           onClick={() => setStatusFilter('all')}
@@ -168,17 +152,22 @@ export const TaskWidget = () => {
         >
           Done Tasks
         </button>
-        <button
-          onClick={() => setStatusFilter('all')}
-          aria-label="Clear filter"
+      </div>
+
+      <div className="sorting-controls" style={{ margin: '1rem 0' }}>
+        <label htmlFor="sort-preference" style={{ marginRight: '0.5rem' }}>Sort by:</label>
+        <select 
+          id="sort-preference"
+          value={sortPreference} 
+          onChange={(e) => setSortPreference(e.target.value as SortPreference)}
         >
-          Clear Filter
-        </button>
+          <option value="createdAt">Date Created</option>
+          <option value="priority">Priority (High to Low)</option>
+        </select>
       </div>
 
       {loading && <div role="status" aria-live="polite">Loading...</div>}
 
-      {/* INTENTIONAL FLAW #2: No memoization - TaskList re-renders unnecessarily */}
       <ul className="task-list" role="list">
         {filteredTasks.length === 0 && !loading && (
           <li className="empty-state">
@@ -186,7 +175,7 @@ export const TaskWidget = () => {
           </li>
         )}
         {filteredTasks.map((task) => (
-          <li key={task.id} className="task-item">
+          <li key={task.id} className="task-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             {editingTaskId === task.id ? (
               <input
                 type="text"
@@ -198,9 +187,9 @@ export const TaskWidget = () => {
                 autoFocus
               />
             ) : (
-              <div onClick={() => handleStartEdit(task)}>
+              <div onClick={() => handleStartEdit(task)} style={{ flex: 1, cursor: 'pointer' }}>
                 <span className="task-title">{task.title}</span>
-                <span className="task-status" data-status={task.status}>
+                <span className="task-status" data-status={task.status} style={{ margin: '0 1rem' }}>
                   Status: {task.status}
                 </span>
                 <span className="task-priority" data-priority={task.priority}>
@@ -208,9 +197,23 @@ export const TaskWidget = () => {
                 </span>
               </div>
             )}
+            <button 
+              onClick={(e) => { e.stopPropagation(); setTaskToDelete(task); }}
+              aria-label={`Delete task: ${task.title}`}
+              style={{ marginLeft: '1rem', padding: '0.2rem 0.5rem', backgroundColor: '#ffcccc', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
+
+      <DeleteConfirmationModal 
+        isOpen={!!taskToDelete}
+        taskTitle={taskToDelete?.title || ''}
+        onConfirm={confirmDelete}
+        onCancel={() => setTaskToDelete(null)}
+      />
     </div>
   );
 };
