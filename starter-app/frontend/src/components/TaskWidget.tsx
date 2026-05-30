@@ -140,40 +140,18 @@ export const TaskWidget = () => {
 
       {/* INTENTIONAL FLAW #7: Magic strings for filter values */}
       <div className="filters">
-        <button
-          onClick={() => setStatusFilter('all')}
-          aria-label="Filter tasks: all"
-          aria-pressed={statusFilter === 'all'}
+        <label htmlFor="status-filter">Filter by status:</label>
+        <select
+          id="status-filter"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filter tasks by status"
         >
-          All Tasks
-        </button>
-        <button
-          onClick={() => setStatusFilter('todo')}
-          aria-label="Filter tasks: todo"
-          aria-pressed={statusFilter === 'todo'}
-        >
-          Todo Tasks
-        </button>
-        <button
-          onClick={() => setStatusFilter('in-progress')}
-          aria-label="Filter tasks: in-progress"
-          aria-pressed={statusFilter === 'in-progress'}
-        >
-          In Progress Tasks
-        </button>
-        <button
-          onClick={() => setStatusFilter('done')}
-          aria-label="Filter tasks: done"
-          aria-pressed={statusFilter === 'done'}
-        >
-          Done Tasks
-        </button>
-        <button
-          onClick={() => setStatusFilter('all')}
-          aria-label="Clear filter"
-        >
-          Clear Filter
-        </button>
+          <option value="all">All Tasks</option>
+          <option value="todo">Todo</option>
+          <option value="in-progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
       </div>
 
       {loading && <div role="status" aria-live="polite">Loading...</div>}
