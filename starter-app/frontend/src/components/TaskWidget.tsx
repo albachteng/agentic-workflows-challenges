@@ -78,6 +78,7 @@ export const TaskWidget = () => {
   const handleSaveEdit = async (taskId: string) => {
     // INTENTIONAL FLAW #9: Duplicated validation
     if (!editingTitle.trim()) {
+      handleCancelEdit();
       return;
     }
 

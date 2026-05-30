@@ -4,10 +4,12 @@
   "description": "Task management widget for agentic workflows lab",
   "type": "module",
   "scripts": {
+	"start": "vite", 
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx}\""

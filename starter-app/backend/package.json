@@ -4,6 +4,7 @@
   "description": "Task management API for agentic workflows lab",
   "type": "module",
   "scripts": {
+    "start": "tsx watch src/index.ts",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",

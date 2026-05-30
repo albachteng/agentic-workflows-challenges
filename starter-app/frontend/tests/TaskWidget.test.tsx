@@ -62,11 +62,11 @@ describe('TaskWidget', () => {
       // Act
       render(<TaskWidget />);
 
-      // Assert
+      // Assert — use data-status to avoid colliding with filter button text
       await waitFor(() => {
-        expect(screen.getByText(/todo/i)).toBeInTheDocument();
-        expect(screen.getByText(/in-progress/i)).toBeInTheDocument();
-        expect(screen.getByText(/done/i)).toBeInTheDocument();
+        expect(document.querySelector('[data-status="todo"]')).toBeInTheDocument();
+        expect(document.querySelector('[data-status="in-progress"]')).toBeInTheDocument();
+        expect(document.querySelector('[data-status="done"]')).toBeInTheDocument();
       });
     });
 
@@ -218,7 +218,7 @@ describe('TaskWidget', () => {
 
       // Assert
       expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
-      expect(screen.getByText(/no tasks.*done/i)).toBeInTheDocument();
+      expect(screen.getByText(/no done tasks/i)).toBeInTheDocument();
     });
   });
 
@@ -238,6 +238,7 @@ describe('TaskWidget', () => {
 
       // Act
       render(<TaskWidget />);
+      await waitFor(() => expect(screen.getByRole('button', { name: /create/i })).not.toBeDisabled());
 
       const input = screen.getByLabelText(/task title/i);
       const submitButton = screen.getByRole('button', { name: /create/i });
@@ -317,6 +318,7 @@ describe('TaskWidget', () => {
 
       // Act
       render(<TaskWidget />);
+      await waitFor(() => expect(screen.getByRole('button', { name: /create/i })).not.toBeDisabled());
 
       const submitButton = screen.getByRole('button', { name: /create/i });
       fireEvent.click(submitButton);
@@ -331,6 +333,7 @@ describe('TaskWidget', () => {
 
       // Act
       render(<TaskWidget />);
+      await waitFor(() => expect(screen.getByRole('button', { name: /create/i })).not.toBeDisabled());
 
       const submitButton = screen.getByRole('button', { name: /create/i });
       fireEvent.click(submitButton);
@@ -514,6 +517,7 @@ describe('TaskWidget', () => {
 
       // Act
       render(<TaskWidget />);
+      await waitFor(() => expect(screen.getByRole('button', { name: /create/i })).not.toBeDisabled());
 
       const input = screen.getByLabelText(/task title/i);
       const submitButton = screen.getByRole('button', { name: /create/i });
@@ -553,6 +557,7 @@ describe('TaskWidget', () => {
 
       // Act
       render(<TaskWidget />);
+      await waitFor(() => expect(screen.getByRole('button', { name: /create/i })).not.toBeDisabled());
 
       const input = screen.getByLabelText(/task title/i);
       const submitButton = screen.getByRole('button', { name: /create/i });
