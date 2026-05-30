@@ -100,14 +100,26 @@ describe('TaskWidget', () => {
   });
 
   describe('Task Filtering', () => {
-    it('should show all tasks by default', async () => {
-      // Arrange
+    it('should render a status filter dropdown', async () => {
       vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
-
-      // Act
       render(<TaskWidget />);
 
-      // Assert
+      const dropdown = screen.getByRole('combobox', { name: /filter.*status/i });
+      expect(dropdown).toBeInTheDocument();
+    });
+
+    it('should default the dropdown to "all"', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      render(<TaskWidget />);
+
+      const dropdown = screen.getByRole('combobox', { name: /filter.*status/i }) as HTMLSelectElement;
+      expect(dropdown.value).toBe('all');
+    });
+
+    it('should show all tasks by default', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      render(<TaskWidget />);
+
       await waitFor(() => {
         expect(screen.getByText('Task 1')).toBeInTheDocument();
         expect(screen.getByText('Task 2')).toBeInTheDocument();
@@ -116,109 +128,176 @@ describe('TaskWidget', () => {
     });
 
     it('should filter tasks by todo status', async () => {
-      // Arrange
       vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
-
-      // Act
       render(<TaskWidget />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Task 1')).toBeInTheDocument();
-      });
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
 
-      const todoFilter = screen.getByLabelText(/filter.*todo/i);
-      fireEvent.click(todoFilter);
+      const dropdown = screen.getByRole('combobox', { name: /filter.*status/i });
+      await userEvent.selectOptions(dropdown, 'todo');
 
-      // Assert
       expect(screen.getByText('Task 1')).toBeInTheDocument();
       expect(screen.queryByText('Task 2')).not.toBeInTheDocument();
       expect(screen.queryByText('Task 3')).not.toBeInTheDocument();
     });
 
     it('should filter tasks by in-progress status', async () => {
-      // Arrange
       vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
-
-      // Act
       render(<TaskWidget />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Task 2')).toBeInTheDocument();
-      });
+      await waitFor(() => expect(screen.getByText('Task 2')).toBeInTheDocument());
 
-      const inProgressFilter = screen.getByLabelText(/filter.*in-progress/i);
-      fireEvent.click(inProgressFilter);
+      const dropdown = screen.getByRole('combobox', { name: /filter.*status/i });
+      await userEvent.selectOptions(dropdown, 'in-progress');
 
-      // Assert
       expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
       expect(screen.getByText('Task 2')).toBeInTheDocument();
       expect(screen.queryByText('Task 3')).not.toBeInTheDocument();
     });
 
     it('should filter tasks by done status', async () => {
-      // Arrange
       vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
-
-      // Act
       render(<TaskWidget />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Task 3')).toBeInTheDocument();
-      });
+      await waitFor(() => expect(screen.getByText('Task 3')).toBeInTheDocument());
 
-      const doneFilter = screen.getByLabelText(/filter.*done/i);
-      fireEvent.click(doneFilter);
+      const dropdown = screen.getByRole('combobox', { name: /filter.*status/i });
+      await userEvent.selectOptions(dropdown, 'done');
 
-      // Assert
       expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
       expect(screen.queryByText('Task 2')).not.toBeInTheDocument();
       expect(screen.getByText('Task 3')).toBeInTheDocument();
     });
 
-    it('should clear filter and show all tasks', async () => {
-      // Arrange
+    it('should reset to all tasks when "all" is selected', async () => {
       vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
-
-      // Act
       render(<TaskWidget />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Task 1')).toBeInTheDocument();
-      });
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
 
-      // Filter to todo
-      const todoFilter = screen.getByLabelText(/filter.*todo/i);
-      fireEvent.click(todoFilter);
+      const dropdown = screen.getByRole('combobox', { name: /filter.*status/i });
+      await userEvent.selectOptions(dropdown, 'todo');
       expect(screen.queryByText('Task 2')).not.toBeInTheDocument();
 
-      // Clear filter
-      const allFilter = screen.getByLabelText(/filter.*all/i);
-      fireEvent.click(allFilter);
+      await userEvent.selectOptions(dropdown, 'all');
 
-      // Assert
       expect(screen.getByText('Task 1')).toBeInTheDocument();
       expect(screen.getByText('Task 2')).toBeInTheDocument();
       expect(screen.getByText('Task 3')).toBeInTheDocument();
     });
 
-    it('should show empty state message when filter has no matches', async () => {
-      // Arrange
+    it('should show empty state when filter has no matches', async () => {
       const todoOnlyTasks = [mockTasks[0]];
       vi.mocked(api.fetchTasks).mockResolvedValue(todoOnlyTasks);
-
-      // Act
       render(<TaskWidget />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Task 1')).toBeInTheDocument();
-      });
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
 
-      const doneFilter = screen.getByLabelText(/filter.*done/i);
-      fireEvent.click(doneFilter);
+      const dropdown = screen.getByRole('combobox', { name: /filter.*status/i });
+      await userEvent.selectOptions(dropdown, 'done');
 
-      // Assert
       expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
       expect(screen.getByText(/no done tasks/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Status Change via Double-Click', () => {
+    it('should show a status selector when a task is double-clicked', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      render(<TaskWidget />);
+
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
+
+      fireEvent.dblClick(screen.getByText('Task 1').closest('li')!);
+
+      expect(screen.getByRole('combobox', { name: /change status/i })).toBeInTheDocument();
+    });
+
+    it('should pre-select the current status in the status selector', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      render(<TaskWidget />);
+
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
+
+      fireEvent.dblClick(screen.getByText('Task 1').closest('li')!);
+
+      const statusSelector = screen.getByRole('combobox', { name: /change status/i }) as HTMLSelectElement;
+      expect(statusSelector.value).toBe('todo');
+    });
+
+    it('should call updateTask with the new status when changed', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      vi.mocked(api.updateTask).mockResolvedValue({ ...mockTasks[0], status: 'in-progress' });
+      render(<TaskWidget />);
+
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
+
+      fireEvent.dblClick(screen.getByText('Task 1').closest('li')!);
+
+      const statusSelector = screen.getByRole('combobox', { name: /change status/i });
+      await userEvent.selectOptions(statusSelector, 'in-progress');
+
+      await waitFor(() => {
+        expect(api.updateTask).toHaveBeenCalledWith('1', { status: 'in-progress' });
+      });
+    });
+
+    it('should update the displayed status after a successful change', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      vi.mocked(api.updateTask).mockResolvedValue({ ...mockTasks[0], status: 'done' });
+      render(<TaskWidget />);
+
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
+
+      fireEvent.dblClick(screen.getByText('Task 1').closest('li')!);
+
+      const statusSelector = screen.getByRole('combobox', { name: /change status/i });
+      await userEvent.selectOptions(statusSelector, 'done');
+
+      await waitFor(() => {
+        expect(document.querySelector('[data-status="done"]')).toBeInTheDocument();
+      });
+    });
+
+    it('should dismiss the status selector after a change is made', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      vi.mocked(api.updateTask).mockResolvedValue({ ...mockTasks[0], status: 'done' });
+      render(<TaskWidget />);
+
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
+
+      fireEvent.dblClick(screen.getByText('Task 1').closest('li')!);
+      const statusSelector = screen.getByRole('combobox', { name: /change status/i });
+      await userEvent.selectOptions(statusSelector, 'done');
+
+      await waitFor(() => {
+        expect(screen.queryByRole('combobox', { name: /change status/i })).not.toBeInTheDocument();
+      });
+    });
+
+    it('should dismiss the status selector on Escape without saving', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      render(<TaskWidget />);
+
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
+
+      fireEvent.dblClick(screen.getByText('Task 1').closest('li')!);
+      const statusSelector = screen.getByRole('combobox', { name: /change status/i });
+      fireEvent.keyDown(statusSelector, { key: 'Escape' });
+
+      expect(screen.queryByRole('combobox', { name: /change status/i })).not.toBeInTheDocument();
+      expect(api.updateTask).not.toHaveBeenCalled();
+    });
+
+    it('should not open status selector on single-click', async () => {
+      vi.mocked(api.fetchTasks).mockResolvedValue(mockTasks);
+      render(<TaskWidget />);
+
+      await waitFor(() => expect(screen.getByText('Task 1')).toBeInTheDocument());
+
+      fireEvent.click(screen.getByText('Task 1').closest('li')!);
+
+      expect(screen.queryByRole('combobox', { name: /change status/i })).not.toBeInTheDocument();
     });
   });
 
